@@ -1,0 +1,58 @@
+name: Deploy to frontend Instance
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Check if there was changes in stage-frontend directory
+      - name: Get changed files in the stage-frontend folder
+        id: changed-files-stage-frontend
+        uses: tj-actions/changed-files@v37
+        with:
+          files: stage-frontend/** # Alternatively using: `stage-frontend` or `stage-frontend/*`
+
+      # if there was a change in directory, run deployment
+      - name: Run deployment if there was changes in stage-frontend directory
+        id: stage-frontend-deployment
+        if: ${{ steps.changed-files-stage-frontend.outputs.any_changed == 'true' }}
+        run: |
+          echo -e "DB_URL=${{ secrets.DEV_DB_URL }}" > ./.env
+          echo "${{ secrets.DEV_frontend_PRIVATE_KEY }}" > ./private_key.pem
+          chmod 600 ./private_key.pem
+
+          ssh -o "StrictHostKeyChecking no" -i ./private_key.pem ubuntu@3.15.34.43 "cd /home/ubuntu/app && sudo docker compose down"
+          scp -o "StrictHostKeyChecking no" -i ./private_key.pem stage-frontend/docker-compose.yml ./.env ubuntu@3.129.218.153:/home/ubuntu/app/
+          ssh -o "StrictHostKeyChecking no" -i ./private_key.pem ubuntu@3.15.34.43 "cd /home/ubuntu/app && sudo docker compose up -d"
+
+      - 
+        name: Send custom JSON data to Slack workflow
+        id: slack
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          # For posting a rich message using Block Kit
+          payload: |
+            {
+              "text": "STAGE frontend DEPLOYMENT RESULT: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "STAGE frontend DEPLOYMENT RESULT: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
