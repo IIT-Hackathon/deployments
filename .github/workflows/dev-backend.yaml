@@ -31,3 +31,5 @@ jobs:
           scp -i ./private_key.pem ./stage-backend/docker-compose.yaml ./stage-backend/.env ubuntu@3.129.218.153:/home/ubuntu/app/
 
 
+
+
