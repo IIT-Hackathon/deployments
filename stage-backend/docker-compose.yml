@@ -1,6 +1,6 @@
 version: "3"
 services:
-  dumb-backend:
+  app:
     image: drfahim/dumb-backend:1
     ports:
       - "80:8000"
