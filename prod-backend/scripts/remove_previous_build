@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo rmi -f drfahim:dumb-backend:latest
+sudo docker rmi -f drfahim:dumb-backend:latest
