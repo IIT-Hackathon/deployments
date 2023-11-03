@@ -28,7 +28,7 @@ jobs:
           echo -e "DB_URL=${{ secrets.DEV_DB_URL }}" > ./.env
           echo "${{ secrets.DEV_BACKEND_PRIVATE_KEY }}" > ./private_key.pem
           chmod 600 ./private_key.pem
-          scp -o "StrictHostKeyChecking no" -i ./private_key.pem ./stage-backend/docker-compose.yaml ./stage-backend/.env ubuntu@3.129.218.153:/home/ubuntu/app/
+          scp -o "StrictHostKeyChecking no" -i ./private_key.pem stage-backend/docker-compose.yaml stage-backend/.env ubuntu@3.129.218.153:/home/ubuntu/app/
 
 
 
