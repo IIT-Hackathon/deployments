@@ -13,15 +13,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Check if there was changes in alembic directory
-      - name: Get changed files in the alembic folder
+      # Check if there was changes in stage-backend directory
+      - name: Get changed files in the stage-backend folder
         id: changed-files-stage-backend
         uses: tj-actions/changed-files@v37
         with:
-          files: stage-backend/** # Alternatively using: `alembic` or `alembic/*`
+          files: stage-backend/** # Alternatively using: `stage-backend` or `stage-backend/*`
 
       # if there was a change in directory, run deployment
-      - name: Run deployment if there was changes in alembic directory
+      - name: Run deployment if there was changes in stage-backend directory
         id: stage-backend-deployment
         if: ${{ steps.changed-files-stage-backend.outputs.any_changed == 'true' }}
         run: |
