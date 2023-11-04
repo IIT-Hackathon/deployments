@@ -1,4 +1,4 @@
-name: Deploy to Backend Instance
+name: Backend Dev
 
 on:
   push:
