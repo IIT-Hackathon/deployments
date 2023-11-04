@@ -20,7 +20,6 @@ jobs:
       - name: Create CodeDeploy Deployment
         id: deploy
         run: |
-          cd prod-backend
           aws deploy create-deployment \
             --application-name test \
             --deployment-group-name test \
