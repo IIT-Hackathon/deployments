@@ -1,7 +1,7 @@
 version: "3"
 services:
   app:
-    image: drfahim/dumb-backend:12
+    image: drfahim/dumb-backend:13
     ports:
       - "80:8000"
     env_file:
