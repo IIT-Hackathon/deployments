@@ -1,1 +1,3 @@
 #!/bin/bash
+sudo systemctl stop app.service
+sudo docker image rm -f drfahim/dumb-backend:latest
