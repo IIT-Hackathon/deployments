@@ -30,7 +30,7 @@ jobs:
           chmod 600 ./private_key.pem
 
           ssh -o "StrictHostKeyChecking no" -i ./private_key.pem ubuntu@3.15.34.43 "cd /home/ubuntu/app && sudo docker compose down"
-          scp -o "StrictHostKeyChecking no" -i ./private_key.pem stage-frontend/docker-compose.yml ./.env ubuntu@3.129.218.153:/home/ubuntu/app/
+          scp -o "StrictHostKeyChecking no" -i ./private_key.pem stage-frontend/docker-compose.yml ./.env ubuntu@3.15.34.43:/home/ubuntu/app/
           ssh -o "StrictHostKeyChecking no" -i ./private_key.pem ubuntu@3.15.34.43 "cd /home/ubuntu/app && sudo docker compose up -d"
 
       - 
