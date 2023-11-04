@@ -22,6 +22,9 @@ jobs:
         run: |
           cd prod-backend
           aws deploy create-deployment \
-            --application-name textwizard-codedeploy-app \
-            --deployment-group-name textwizard-codedeploy-deployment-group \
+            --application-name test \
+            --deployment-group-name test \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
+
+
+
