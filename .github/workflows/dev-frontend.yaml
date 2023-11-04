@@ -1,4 +1,4 @@
-name: Deploy to frontend Instance
+name: Dev Frontend
 
 on:
   push:
