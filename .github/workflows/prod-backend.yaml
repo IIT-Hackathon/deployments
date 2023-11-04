@@ -21,8 +21,8 @@ jobs:
         id: deploy
         run: |
           aws deploy create-deployment \
-            --application-name test \
-            --deployment-group-name test \
+            --application-name textwizard-codedeploy-app \
+            --deployment-group-name textwizard-codedeploy-deployment-group \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
 
 
