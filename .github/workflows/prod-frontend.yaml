@@ -29,9 +29,9 @@ jobs:
           echo "${{ secrets.DEV_BACKEND_PRIVATE_KEY }}" > ./private_key.pem
           chmod 600 ./private_key.pem
 
-          ssh -o "StrictHostKeyChecking no" -i ./private_key.pem ubuntu@3.15.34.43 "cd /home/ubuntu/app && sudo docker compose down"
+          ssh -o "StrictHostKeyChecking no" -i ./private_key.pem ubuntu@18.221.233.23 "cd /home/ubuntu/app && sudo docker compose down"
           scp -o "StrictHostKeyChecking no" -i ./private_key.pem prod-frontend/docker-compose.yml ./.env ubuntu@18.221.233.23:/home/ubuntu/app/
-          ssh -o "StrictHostKeyChecking no" -i ./private_key.pem ubuntu@3.15.34.43 "cd /home/ubuntu/app && sudo docker compose up -d"
+          ssh -o "StrictHostKeyChecking no" -i ./private_key.pem ubuntu@18.221.233.23 "cd /home/ubuntu/app && sudo docker compose up -d"
 
       - 
         name: Send custom JSON data to Slack workflow
