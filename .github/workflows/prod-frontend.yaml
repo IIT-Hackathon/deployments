@@ -1,0 +1,58 @@
+name: Deploy to frontend Instance
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Check if there was changes in prod-frontend directory
+      - name: Get changed files in the prod-frontend folder
+        id: changed-files-prod-frontend
+        uses: tj-actions/changed-files@v37
+        with:
+          files: prod-frontend/** # Alternatively using: `prod-frontend` or `prod-frontend/*`
+
+      # if there was a change in directory, run deployment
+      - name: Run deployment if there was changes in prod-frontend directory
+        id: prod-frontend-deployment
+        if: ${{ steps.changed-files-prod-frontend.outputs.any_changed == 'true' }}
+        run: |
+          echo -e "NEXT_PUBLIC_ENDPOINT = ${{ secrets.PROD_BACKEND_URL }}" > ./.env
+          echo "${{ secrets.DEV_BACKEND_PRIVATE_KEY }}" > ./private_key.pem
+          chmod 600 ./private_key.pem
+
+          ssh -o "StrictHostKeyChecking no" -i ./private_key.pem ubuntu@3.15.34.43 "cd /home/ubuntu/app && sudo docker compose down"
+          scp -o "StrictHostKeyChecking no" -i ./private_key.pem prod-frontend/docker-compose.yml ./.env ubuntu@18.221.233.23:/home/ubuntu/app/
+          ssh -o "StrictHostKeyChecking no" -i ./private_key.pem ubuntu@3.15.34.43 "cd /home/ubuntu/app && sudo docker compose up -d"
+
+      - 
+        name: Send custom JSON data to Slack workflow
+        id: slack
+        if: ${{ steps.changed-files-prod-frontend.outputs.any_changed == 'true' }}
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          # For posting a rich message using Block Kit
+          payload: |
+            {
+              "text": "prod frontend DEPLOYMENT RESULT: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "prod frontend DEPLOYMENT RESULT: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
